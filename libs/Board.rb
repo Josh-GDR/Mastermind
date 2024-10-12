@@ -1,66 +1,50 @@
 require 'colorize'
 
 class Board
-  @@validColors = [:red, :blue, :black, :yellow, :purple, :green]
+  @@colorList = [:red, :blue, :yellow, :green, :black]
+  @@minTurns = 1
+  @@maxTurns = 8
 
   def initialize
-    @codeDisplayer = Array.new(4, 0)
+    @code = [:red, :blue, :yellow, :green]
   end
 
-  def set_code
-
-    @V1 = set_color(1)
-    @V2 = set_color(2)
-    @V3 = set_color(3)
-    @V4 = set_color(4)
-    
+  def setColorCode
+    for i in (0...4)
+      @code[i] = setColor(i + 1)
+    end
   end
 
-  private def set_color(iteration)
-    show_color_list
-    
-    puts "Set the color of value ##{iteration}"
-    print 'I think I want the color: '
+  private def setColor(colorPos)
+    puts "color ##{colorPos}\n#{@@colorList}"
+    print "\nChoose a color of the list: "
     color = gets.chomp.downcase.to_sym
-    
-    unless @@validColors.include?(color)
+
+    unless @@colorList.include?(color)
       system 'clear'
-      puts "|=== type one of the colors on the list! ===|\n"
-      
-      return set_color(iteration) 
+      puts "|---  #{color} is not on the list  ---|"
+      return setColor(colorPos)
     end
-    
-    print 'Are you sure? [Y/N]: '.colorize(color)
-    
-    unless gets.chomp.upcase.chars.first.eql?('Y') 
-      return set_color(iteration)
+
+    print "\nAre you sure about this color?\n[Y/N] > ".colorize(color)
+    unless gets.chomp.upcase.start_with?('Y')
+      system 'clear'
+      return setColor(colorPos)
+    else
+      return color
     end
-    
+  end
+
+  def setTurn
     system 'clear'
-    color
-  end
-
-  def show_color_list
-    puts "\nColor\'s list: "
-    @@validColors.each {|color| puts "#{color}"}
-  end
-
-  def play!
-    minTurns = 1;
-    maxTurns = 8;
-    puts "[minum turns: #{minTurns}, maximum turns: #{maxTurns}]"
-    print 'How many chances you want to give to you opponent: '
-    turns = gets.chomp
-
-    unless turns.to_i.between?(minTurns, maxTurns)
-      play!
-      return
+    print "\nHow many turns you want to have?\n[minimum turns: #{@@minTurns}, maximum turns: #{@@maxTurns}] > "
+    turns = gets.to_i
+    
+    if turns.between?(@@minTurns, @@maxTurns)
+      turns
+    else
+      setTurn
     end
-
-
-    puts 'Work in progress'
   end
-
-
 
 end
